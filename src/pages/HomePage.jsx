@@ -52,7 +52,11 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
         <div className="hero-content">
           <div className="hero-kicker">
             <div className="hero-kicker-line" />
-            <span className="hero-kicker-text">Premium Barbershop · Friendswood, TX</span>
+            <span className="hero-kicker-text">
+              {(s.hero_kicker_text || 'Premium Barbershop')}
+              {' • '}
+              {(s.hero_location_text || 'Friendswood, TX')}
+            </span>
           </div>
 
           <h1 className="hero-title">
@@ -125,7 +129,11 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             <div>
               <div className="section-eyebrow">Our Services</div>
               <h2 className="section-headline">
-                Premium <strong>Grooming</strong><br />Menu
+                {s.services_section_title || (
+                  <>
+                    Premium <strong>Grooming</strong><br />Menu
+                  </>
+                )}
               </h2>
             </div>
             <div style={{ textAlign: 'right' }}>
