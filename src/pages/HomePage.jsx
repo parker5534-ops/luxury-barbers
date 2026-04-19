@@ -9,9 +9,25 @@ function todayHours(s) {
   return s[key] || '—';
 }
 
-const IgIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>;
-const FbIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>;
-const TkIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>;
+const IgIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const FbIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
+
+const TkIcon = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 export default function HomePage({ data, navigate, bookClick, callClick }) {
   const s = data.settings;
@@ -26,7 +42,9 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
     const els = document.querySelectorAll('.reveal');
     if (!els.length) return;
     const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); } });
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); }
+      });
     }, { threshold: 0.12 });
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
@@ -34,55 +52,38 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
 
   useEffect(() => {
     if (homeGallerySlides.length <= 1) return;
-
     const id = setInterval(() => {
       setGallerySlide((prev) => (prev + 1) % homeGallerySlides.length);
     }, 3500);
-
     return () => clearInterval(id);
   }, [homeGallerySlides.length]);
 
   return (
     <>
       {/* ═══════════════════════════════════════
-          HERO — content from admin settings
+          HERO — single, clean, matches reference
       ═══════════════════════════════════════ */}
       <section
         className={`hero${s.hero_bg_image ? ' has-bg' : ''}`}
         style={s.hero_bg_image ? { '--hero-bg-img': `url("${s.hero_bg_image}")` } : {}}
       >
-        {/* Gradient orbs only show when there's no photo BG */}
+        {/* Gradient orbs — only when no photo background */}
         {!s.hero_bg_image && <div className="hero-orb-1" />}
         {!s.hero_bg_image && <div className="hero-orb-2" />}
 
-        {/* Top padding so content clears the fixed header on first paint */}
+        {/* Spacer so content clears the fixed header */}
         <div style={{ height: 'var(--header-h, 108px)', flexShrink: 0 }} aria-hidden="true" />
 
         <div className="hero-content hero-content-split">
+
+          {/* ── ROW 1: Title (left) + Logo (right) ── */}
           <div className="hero-brand-row">
+            <h1 className="hero-title">
+              <span className="hero-name-gradient">
+                {s.business_name || 'Luxury Barber Culture'}
+              </span>
+            </h1>
 
-            <div className="hero-copy">
-              <h1 className="hero-title">
-                <span className="line-strong">
-                  {s.business_name || 'Luxury Barber Culture'}
-                </span>
-              </h1>
-
-              <div className="hero-ctas">
-                <button className="btn-primary" onClick={() => bookClick('hero')}>
-                  Book Appointment
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-                <a href={`tel:${s.phone}`} className="btn-outline" onClick={() => callClick('hero')}>
-                  Call
-                </a>
-              </div>
-            </div>
-
-            {/* 🔥 THIS IS THE LOGO */}
             {s.logo_url && (
               <div className="hero-logo-wrap">
                 <img
@@ -92,46 +93,46 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
                 />
               </div>
             )}
-
           </div>
 
-          <h1 className="hero-title">
-            <span className="line-strong">
-              {s.business_name || 'Luxury Barber Culture'}
-            </span>
-          </h1>
+          {/* ── ROW 2: ONE Book Now button ── */}
+          <button className="hero-book-btn" onClick={() => bookClick('hero')}>
+            Book Now
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
 
-          <div className="hero-ctas">
-            <button className="btn-primary" onClick={() => bookClick('hero')}>
-              Book Appointment
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            <a href={`tel:${s.phone}`} className="btn-outline" onClick={() => callClick('hero')}>
-              Call
+          {/* ── ROW 3: ONE contact row — Instagram + phone + hours ── */}
+          <div className="hero-contact-row">
+            {s.instagram_url && (
+              <a
+                href={s.instagram_url}
+                target="_blank"
+                rel="noopener"
+                className="hero-contact-ig"
+                aria-label="Instagram"
+                onClick={() => track('instagram_click', 'hero')}
+              >
+                <IgIcon />
+              </a>
+            )}
+            <a
+              href={`tel:${s.phone}`}
+              className="hero-contact-phone"
+              onClick={() => callClick('hero')}
+            >
+              {s.phone}
             </a>
+            <span className="hero-contact-sep">—</span>
+            <span
+              className="hero-contact-status"
+              style={{ color: isClosed ? 'var(--red)' : 'var(--teal)' }}
+            >
+              {isClosed ? 'Closed Today' : `Open · ${todayHrs}`}
+            </span>
           </div>
 
-          <div className="hero-stats">
-            <div className="hero-stat">
-              <div className="hero-stat-val" style={{ background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                5.0★
-              </div>
-              <div className="hero-stat-label">Google Rated</div>
-            </div>
-            <div className="hero-stat">
-              <div className="hero-stat-val">24/7</div>
-              <div className="hero-stat-label">Online Booking</div>
-            </div>
-            <div className="hero-stat">
-              <div className="hero-stat-val" style={{ color: isClosed ? 'var(--red)' : 'var(--teal)', fontSize: '1.3rem' }}>
-                {isClosed ? 'Closed' : 'Open'}
-              </div>
-              <div className="hero-stat-label">{isClosed ? 'Today' : todayHrs}</div>
-            </div>
-          </div>
         </div>
 
         <div className="hero-scroll-hint" aria-hidden="true">
@@ -150,9 +151,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
               <div className="section-eyebrow">Our Services</div>
               <h2 className="section-headline">
                 {s.services_section_title || (
-                  <>
-                    Premium <strong>Grooming</strong><br />Menu
-                  </>
+                  <>Premium <strong>Grooming</strong><br />Menu</>
                 )}
               </h2>
             </div>
@@ -161,7 +160,11 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
                 Every service is precision-crafted to your style. Tailored, not templated.
               </p>
               {data.services.length > 4 && (
-                <button className="btn-ghost" style={{ marginTop: 16, marginLeft: 'auto' }} onClick={() => navigate('services')}>
+                <button
+                  className="btn-ghost"
+                  style={{ marginTop: 16, marginLeft: 'auto' }}
+                  onClick={() => navigate('services')}
+                >
                   View full menu →
                 </button>
               )}
@@ -203,15 +206,13 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
       </section>
 
       {/* ═══════════════════════════════════════
-          TEAM (if barbers with photos)
+          TEAM
       ═══════════════════════════════════════ */}
       {data.barbers.length > 0 && (
         <section className="team-section">
           <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
             <div className="section-eyebrow">The Team</div>
-            <h2 className="section-headline">
-              Meet Your <strong>Barbers</strong>
-            </h2>
+            <h2 className="section-headline">Meet Your <strong>Barbers</strong></h2>
 
             <div className="barbers-grid">
               {data.barbers.map((b, i) => (
@@ -273,27 +274,14 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
                   <>
                     <button
                       className="gallery-arrow prev"
-                      onClick={() =>
-                        setGallerySlide((prev) =>
-                          prev === 0 ? homeGallerySlides.length - 1 : prev - 1
-                        )
-                      }
+                      onClick={() => setGallerySlide((prev) => prev === 0 ? homeGallerySlides.length - 1 : prev - 1)}
                       aria-label="Previous slide"
-                    >
-                      ←
-                    </button>
-
+                    >←</button>
                     <button
                       className="gallery-arrow next"
-                      onClick={() =>
-                        setGallerySlide((prev) =>
-                          (prev + 1) % homeGallerySlides.length
-                        )
-                      }
+                      onClick={() => setGallerySlide((prev) => (prev + 1) % homeGallerySlides.length)}
                       aria-label="Next slide"
-                    >
-                      →
-                    </button>
+                    >→</button>
                   </>
                 )}
               </div>
@@ -328,9 +316,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 20 }}>
               <div>
                 <div className="section-eyebrow">Client Reviews</div>
-                <h2 className="section-headline">
-                  What They're <strong>Saying</strong>
-                </h2>
+                <h2 className="section-headline">What They're <strong>Saying</strong></h2>
               </div>
               <button className="btn-ghost" onClick={() => navigate('reviews')}>All reviews →</button>
             </div>
@@ -338,7 +324,9 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
               {data.testimonials.slice(0, 3).map((r, i) => (
                 <div key={r.id} className="review-card reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
                   <div className="review-stars">
-                    {Array.from({ length: r.rating }).map((_, j) => <span key={j} className="review-star">★</span>)}
+                    {Array.from({ length: r.rating }).map((_, j) => (
+                      <span key={j} className="review-star">★</span>
+                    ))}
                   </div>
                   <div className="review-text">{r.text}</div>
                   <div className="review-footer">
@@ -356,9 +344,19 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
       {/* ═══════════════════════════════════════
           FINAL CTA
       ═══════════════════════════════════════ */}
-      <section style={{ background: 'var(--ink)', padding: 'clamp(80px,10vw,140px) clamp(20px,5vw,64px)', position: 'relative', overflow: 'hidden' }}>
-        {/* Background glow */}
-        <div aria-hidden="true" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '60%', height: '80%', borderRadius: '50%', background: 'radial-gradient(ellipse,rgba(74,124,255,0.08) 0%,transparent 70%)', pointerEvents: 'none' }} />
+      <section style={{
+        background: 'var(--ink)',
+        padding: 'clamp(80px,10vw,140px) clamp(20px,5vw,64px)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div aria-hidden="true" style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%,-50%)',
+          width: '60%', height: '80%', borderRadius: '50%',
+          background: 'radial-gradient(ellipse,rgba(74,124,255,0.08) 0%,transparent 70%)',
+          pointerEvents: 'none',
+        }} />
 
         <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <div className="section-eyebrow" style={{ justifyContent: 'center' }}>Ready?</div>
@@ -369,7 +367,11 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             Walk out looking sharp. Book 24/7 online — no waiting, no phone calls needed.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
-            <button className="btn-primary" onClick={() => bookClick('bottom_cta')} style={{ padding: '17px 40px', fontSize: '0.75rem' }}>
+            <button
+              className="btn-primary"
+              onClick={() => bookClick('bottom_cta')}
+              style={{ padding: '17px 40px', fontSize: '0.75rem' }}
+            >
               Book on Vagaro →
             </button>
             <button className="btn-outline" onClick={() => navigate('contact')}>
@@ -377,9 +379,24 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             </button>
           </div>
           <div className="social-row" style={{ justifyContent: 'center' }}>
-            {s.instagram_url && <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('instagram_click', 'cta')}><IgIcon /></a>}
-            {s.facebook_url && <a href={s.facebook_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('facebook_click', 'cta')}><FbIcon /></a>}
-            {s.tiktok_url && <a href={s.tiktok_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('tiktok_click', 'cta')}><TkIcon /></a>}
+            {s.instagram_url && (
+              <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn"
+                onClick={() => track('instagram_click', 'cta')}>
+                <IgIcon />
+              </a>
+            )}
+            {s.facebook_url && (
+              <a href={s.facebook_url} target="_blank" rel="noopener" className="social-btn"
+                onClick={() => track('facebook_click', 'cta')}>
+                <FbIcon />
+              </a>
+            )}
+            {s.tiktok_url && (
+              <a href={s.tiktok_url} target="_blank" rel="noopener" className="social-btn"
+                onClick={() => track('tiktok_click', 'cta')}>
+                <TkIcon />
+              </a>
+            )}
           </div>
         </div>
       </section>
