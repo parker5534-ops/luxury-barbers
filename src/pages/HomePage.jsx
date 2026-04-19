@@ -1,23 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { track } from '../lib/api.js';
 
-const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 function todayHours(s) {
-  const jsToLbc = [6,0,1,2,3,4,5];
+  const jsToLbc = [6, 0, 1, 2, 3, 4, 5];
   const key = 'hours_' + DAYS[jsToLbc[new Date().getDay()]];
   return s[key] || '—';
 }
 
-const IgIcon  = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>;
-const FbIcon  = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>;
-const TkIcon  = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>;
+const IgIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>;
+const FbIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>;
+const TkIcon = () => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>;
 
 export default function HomePage({ data, navigate, bookClick, callClick }) {
   const s = data.settings;
   const services = data.services.slice(0, 4);
+  const homeGallerySlides = data.gallery.slice(0, 6);
   const todayHrs = todayHours(s);
   const isClosed = todayHrs === 'Closed';
+  const [gallerySlide, setGallerySlide] = useState(0);
 
   // Intersection observer for reveal animations
   useEffect(() => {
@@ -29,6 +31,16 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (homeGallerySlides.length <= 1) return;
+
+    const id = setInterval(() => {
+      setGallerySlide((prev) => (prev + 1) % homeGallerySlides.length);
+    }, 3500);
+
+    return () => clearInterval(id);
+  }, [homeGallerySlides.length]);
 
   return (
     <>
@@ -43,60 +55,68 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
         {!s.hero_bg_image && <div className="hero-orb-1" />}
         {!s.hero_bg_image && <div className="hero-orb-2" />}
 
-        <div className="hero-deco-num" aria-hidden="true">LBC</div>
-        <div className="hero-vertical-text" aria-hidden="true">Est. Friendswood, TX</div>
-
         {/* Top padding so content clears the fixed header on first paint */}
         <div style={{ height: 'var(--header-h, 108px)', flexShrink: 0 }} aria-hidden="true" />
 
-        <div className="hero-content">
-          <div className="hero-kicker">
-            <div className="hero-kicker-line" />
-            <span className="hero-kicker-text">
-              {(s.hero_kicker_text || 'Premium Barbershop')}
-              {' • '}
-              {(s.hero_location_text || 'Friendswood, TX')}
-            </span>
+        <div className="hero-content hero-content-split">
+          <div className="hero-brand-row">
+
+            <div className="hero-copy">
+              <h1 className="hero-title">
+                <span className="line-strong">
+                  {s.business_name || 'Luxury Barber Culture'}
+                </span>
+              </h1>
+
+              <div className="hero-ctas">
+                <button className="btn-primary" onClick={() => bookClick('hero')}>
+                  Book Appointment
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                <a href={`tel:${s.phone}`} className="btn-outline" onClick={() => callClick('hero')}>
+                  Call
+                </a>
+              </div>
+            </div>
+
+            {/* 🔥 THIS IS THE LOGO */}
+            {s.logo_url && (
+              <div className="hero-logo-wrap">
+                <img
+                  src={s.logo_url}
+                  alt={s.business_name || 'Logo'}
+                  className="hero-logo-img"
+                />
+              </div>
+            )}
+
           </div>
 
           <h1 className="hero-title">
-              <span className="line-italic">
-                {s.hero_headline || 'Luxury Cuts.'}
-              </span>
+            <span className="line-strong">
+              {s.business_name || 'Luxury Barber Culture'}
+            </span>
           </h1>
-
-          {s.hero_subheadline && (
-            <div className="hero-callout">
-              <div className="hero-callout-icon">”</div>
-              <div className="hero-callout-text">
-                {s.hero_subheadline}
-              </div>
-            </div>
-          )}
-
-          <p className="hero-sub">
-            Elevate your look with elite barbers. Where culture and luxury collide — every cut, every time.
-          </p>
 
           <div className="hero-ctas">
             <button className="btn-primary" onClick={() => bookClick('hero')}>
               Book Appointment
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
             </button>
-            {s.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener"
-                className="btn-outline" onClick={() => track('instagram_click','hero')}>
-                <IgIcon /> Instagram
-              </a>
-            )}
-            <a href={`tel:${s.phone}`} className="btn-ghost" onClick={() => callClick('hero')}>
-              {s.phone} →
+
+            <a href={`tel:${s.phone}`} className="btn-outline" onClick={() => callClick('hero')}>
+              Call
             </a>
           </div>
 
           <div className="hero-stats">
             <div className="hero-stat">
-              <div className="hero-stat-val" style={{ background:'var(--grad)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
+              <div className="hero-stat-val" style={{ background: 'var(--grad)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 5.0★
               </div>
               <div className="hero-stat-label">Google Rated</div>
@@ -221,23 +241,79 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
       {/* ═══════════════════════════════════════
           GALLERY PREVIEW
       ═══════════════════════════════════════ */}
-      {data.gallery.length > 0 && (
-        <section className="gallery-section">
+      {homeGallerySlides.length > 0 && (
+        <section className="home-gallery-slider">
           <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, flexWrap: 'wrap', gap: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap', gap: 20 }}>
               <div>
                 <div className="section-eyebrow">Portfolio</div>
                 <h2 className="section-headline">Our <strong>Work</strong></h2>
               </div>
-              <button className="btn-ghost" onClick={() => navigate('gallery')}>View all →</button>
+              <button className="btn-ghost" onClick={() => navigate('gallery')}>
+                View all →
+              </button>
             </div>
-            <div className="gallery-grid">
-              {data.gallery.slice(0, 6).map((img, i) => (
-                <div key={img.id} className="gallery-item" onClick={() => navigate('gallery')}>
-                  <img src={img.thumbnail_url || img.url} alt={img.caption || `Work ${i+1}`} loading="lazy" />
-                  <div className="gallery-item-overlay" />
-                </div>
-              ))}
+
+            <div className="gallery-slider-shell">
+              <div className="gallery-slider-main">
+                {homeGallerySlides.map((img, i) => (
+                  <div
+                    key={(img.id || img.url || i) + '-slide'}
+                    className={`gallery-slide ${i === gallerySlide ? 'active' : ''}`}
+                  >
+                    <img
+                      src={img.url || img.thumbnail_url}
+                      alt={img.caption || `Work ${i + 1}`}
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+
+                {homeGallerySlides.length > 1 && (
+                  <>
+                    <button
+                      className="gallery-arrow prev"
+                      onClick={() =>
+                        setGallerySlide((prev) =>
+                          prev === 0 ? homeGallerySlides.length - 1 : prev - 1
+                        )
+                      }
+                      aria-label="Previous slide"
+                    >
+                      ←
+                    </button>
+
+                    <button
+                      className="gallery-arrow next"
+                      onClick={() =>
+                        setGallerySlide((prev) =>
+                          (prev + 1) % homeGallerySlides.length
+                        )
+                      }
+                      aria-label="Next slide"
+                    >
+                      →
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="gallery-slider-thumbs">
+                {homeGallerySlides.map((img, i) => (
+                  <button
+                    key={(img.id || img.url || i) + '-thumb'}
+                    className={`gallery-thumb ${i === gallerySlide ? 'active' : ''}`}
+                    onClick={() => setGallerySlide(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                  >
+                    <img
+                      src={img.thumbnail_url || img.url}
+                      alt={img.caption || `Thumbnail ${i + 1}`}
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -301,9 +377,9 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             </button>
           </div>
           <div className="social-row" style={{ justifyContent: 'center' }}>
-            {s.instagram_url && <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('instagram_click','cta')}><IgIcon /></a>}
-            {s.facebook_url  && <a href={s.facebook_url}  target="_blank" rel="noopener" className="social-btn" onClick={() => track('facebook_click','cta')}><FbIcon /></a>}
-            {s.tiktok_url    && <a href={s.tiktok_url}    target="_blank" rel="noopener" className="social-btn" onClick={() => track('tiktok_click','cta')}><TkIcon /></a>}
+            {s.instagram_url && <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('instagram_click', 'cta')}><IgIcon /></a>}
+            {s.facebook_url && <a href={s.facebook_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('facebook_click', 'cta')}><FbIcon /></a>}
+            {s.tiktok_url && <a href={s.tiktok_url} target="_blank" rel="noopener" className="social-btn" onClick={() => track('tiktok_click', 'cta')}><TkIcon /></a>}
           </div>
         </div>
       </section>
