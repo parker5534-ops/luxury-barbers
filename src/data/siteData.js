@@ -1,0 +1,203 @@
+export const siteData = {
+    settings: {
+        business_name: 'Lets Look And Feel Good!',
+        hero_headline: 'Luxury Cuts.',
+        hero_subheadline: 'Precision Grooming.',
+        hero_bg_image: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776571421/luxury-barbers/gallery/jdcqnqt6884iqgilo0ip.jpg',
+        logo_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776571437/luxury-barbers/gallery/ty1mrfnlfiawbsucvm9v.png',
+        phone: '(832) 899-9191',
+        email: 'luxurybarberculture1@gmail.com',
+        address: '19056 Gulf Freeway, Suite 11, Friendswood, TX 77546',
+        vagaro_url: 'https://www.vagaro.com/luxurybarberculture',
+        instagram_url: 'https://instagram.com/luxurybarberculture',
+        facebook_url: 'https://facebook.com/luxurybarberculture',
+        tiktok_url: 'https://tiktok.com/@luxurybarberculture',
+        hours_monday: 'Closed',
+        hours_tuesday: '10:00 AM – 7:00 PM',
+        hours_wednesday: '10:00 AM – 7:00 PM',
+        hours_thursday: '10:00 AM – 7:00 PM',
+        hours_friday: '10:00 AM – 7:00 PM',
+        hours_saturday: '9:00 AM – 5:00 PM',
+        hours_sunday: 'Closed',
+        promo_text: 'Now accepting new clients — Book online 24/7 via Vagaro',
+        about_text: 'Luxury Barber Culture was built on the belief that every cut is a statement.',
+        cancellation_policy:
+            'To maintain the professionalism of our services, we kindly request a minimum of 1 hour notice for any appointment cancellations. Cancellations made within this timeframe allow us to accommodate other clients and manage our schedule efficiently. A cancellation fee may apply for appointments canceled less than 1 hour in advance. We appreciate your understanding and cooperation to providing timely and exceptional service.',
+        seo_title: 'Luxury Barber Culture | Premium Cuts in Friendswood, TX',
+        seo_description:
+            'Precision haircuts, beard sculpting, and top-tier grooming in Friendswood, TX. Book online 24/7 via Vagaro.',
+    },
+
+    page_backgrounds: {
+        services: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640391/rbsDe5f7Bo31qw1Erp5nOnv9CqmUg3IF1Z2ijPn-PwN8SMetUbjPiv1VFU-m13bJApQYZ8IttgVJdsQeu5QTaf7reBVohvICAK6aI0N0ekX0KitJhRcqt4GDBifaS80bFXMieyVeanC9lpp-rJa_OXzlmVMrdKJGTL4m4ikNXUmf-CcFgDUqvPYPH5YWqw63_d6566z.jpg',
+        about: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/inside_suite_hizejm.jpg',
+        faq: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471031/luxury-barbers/gallery/eszjx9uzakbjltxr6qeo.jpg',
+        contact: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471022/luxury-barbers/gallery/ybm6aipilchgsnzsvhdo.jpg',
+        gallery: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/IMG_3106_h3vxp0.png',
+    },
+
+    // Used as the main visual on the About page
+    about_image: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/inside_suite_hizejm.jpg',
+
+    // Background images for each section on the home page.
+    home_section_backgrounds: {
+        services: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640391/rbsDe5f7Bo31qw1Erp5nOnv9CqmUg3IF1Z2ijPn-PwN8SMetUbjPiv1VFU-m13bJApQYZ8IttgVJdsQeu5QTaf7reBVohvICAK6aI0N0ekX0KitJhRcqt4GDBifaS80bFXMieyVeanC9lpp-rJa_OXzlmVMrdKJGTL4m4ikNXUmf-CcFgDUqvPYPH5YWqw63_d6566z.jpg',
+        team: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/inside_suite_hizejm.jpg',
+        gallery: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776571421/luxury-barbers/gallery/jdcqnqt6884iqgilo0ip.jpg',
+        cta: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471040/luxury-barbers/gallery/ekohmnp8jibo4gxmesbd.jpg',
+    },
+
+    services: [
+        {
+            id: '1',
+            name: 'Haircut',
+            price: '$45',
+            duration: '45 min',
+            type: 'main',
+            description: 'A customized haircut designed to fit your individual style. Precision over speed, every time.',
+        },
+        {
+            id: '2',
+            name: "Child's Haircut",
+            price: '$35',
+            duration: '30 min',
+            type: 'main',
+            description: "Elevate your child's style with an expertly crafted haircut.",
+        },
+        {
+            id: '3',
+            name: 'Haircut & Quick Beard Trim',
+            price: '$55',
+            duration: '60 min',
+            type: 'main',
+            description: 'The full look, dialed in. A precision haircut paired with a clean beard trim.',
+        },
+        {
+            id: '4',
+            name: 'Quick Beard Trim',
+            price: '$20',
+            duration: '20 min',
+            type: 'main',
+            description: 'Keep your beard clean, defined, and on-point between cuts.',
+        },
+        {
+            id: '5',
+            name: 'Shampoo & Conditioning',
+            price: '+$10',
+            duration: '15 min',
+            type: 'addon',
+            description: 'Professional shampoo and conditioning for a clean, refreshed finish.',
+        },
+        {
+            id: '6',
+            name: 'Eyebrow Shaping (Straight Razor)',
+            price: '+$5',
+            duration: '10 min',
+            type: 'addon',
+            description: 'Clean eyebrow shaping for a sharper, more defined look.',
+        },
+        {
+            id: '7',
+            name: 'Ear & Nose Waxing',
+            price: '+$20',
+            duration: '15 min',
+            type: 'addon',
+            description: 'Removes unwanted ear and nose hair for a polished finish.',
+        },
+        {
+            id: '8',
+            name: 'Hair Design',
+            price: '+$10+',
+            duration: '15 min',
+            type: 'addon',
+            description: 'Custom line or pattern design to elevate your cut.',
+        },
+    ],
+
+
+
+    gallery: [
+        {
+            id: '1',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471031/luxury-barbers/gallery/eszjx9uzakbjltxr6qeo.jpg',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471031/luxury-barbers/gallery/eszjx9uzakbjltxr6qeo.jpg',
+            caption: 'Precision fade',
+            category: 'fade',
+        },
+        {
+            id: '2',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471022/luxury-barbers/gallery/ybm6aipilchgsnzsvhdo.jpg',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471022/luxury-barbers/gallery/ybm6aipilchgsnzsvhdo.jpg',
+            caption: 'Luxury haircut',
+            category: 'haircut',
+        },
+        {
+            id: '3',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776470988/luxury-barbers/gallery/upsgqif7edsoig3b1top.jpg',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776470988/luxury-barbers/gallery/upsgqif7edsoig3b1top.jpg',
+            caption: 'Beard sculpting',
+            category: 'beard',
+        },
+        {
+            id: '4',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471040/luxury-barbers/gallery/ekohmnp8jibo4gxmesbd.jpg',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776471040/luxury-barbers/gallery/ekohmnp8jibo4gxmesbd.jpg',
+            caption: 'Shop work',
+            category: 'haircut',
+        },
+        {
+            id: '5',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/IMG_3106_h3vxp0.png',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/IMG_3106_h3vxp0.png',
+            caption: 'Clean taper',
+            category: 'fade',
+        },
+        {
+            id: '6',
+            url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/IMG_3107_e8bwyl.png',
+            thumbnail_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/IMG_3107_e8bwyl.png',
+            caption: 'Barber culture',
+            category: 'haircut',
+        },
+    ],
+
+    barbers: [
+        {
+            photo_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776640390/image_qahsew.jpg',
+            id: '1',
+            name: 'Alfonso Arredondo',
+            title: 'Owner & Master Barber',
+            bio: 'Alfonso Arredondo – Owner & Master Barber, Luxury Barber Culture Luxury Barber Culture isn’t just a barbershop—it’s an experience. As the owner and master barber, I’ve built a space where precision meets artistry, and every cut is a statement. With years of expertise and a passion for top-tier grooming, I specialize in creating sharp, tailored looks that match your style and personality. Whether it’s a classic cut, a fresh fade, or meticulous beard sculpting, I bring a level of craftsmanship that speaks for itself. Step into a world where culture and luxury collide—book your appointment today.',
+            specialties: ['Precision Cuts', 'Fades', 'Beard Sculpting'],
+        },
+    ],
+
+    faqs: [
+        {
+            id: '1',
+            question: 'Do I need an appointment?',
+            answer:
+                'Appointments are strongly recommended. Walk-ins welcome based on availability. Book 24/7 via Vagaro.',
+        },
+        {
+            id: '2',
+            question: 'How do I book?',
+            answer: 'Click any Book Now button to go to our Vagaro booking page.',
+        },
+        {
+            id: '3',
+            question: 'What payment do you accept?',
+            answer: 'Credit/debit cards, Zelle, and cash.',
+        },
+        {
+            id: '4',
+            question: 'Where are you located?',
+            answer: '19056 Gulf Freeway, Suite 11, Friendswood, TX 77546.',
+        },
+        {
+            id: '5',
+            question: 'What are your hours?',
+            answer: 'Tue–Fri 10AM–7PM, Sat 9AM–5PM. Closed Mon & Sun.',
+        },
+    ],
+};

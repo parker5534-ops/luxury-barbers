@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { track } from '../lib/api.js';
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -7,6 +6,13 @@ function todayHours(s) {
   const jsToLbc = [6, 0, 1, 2, 3, 4, 5];
   const key = 'hours_' + DAYS[jsToLbc[new Date().getDay()]];
   return s[key] || '—';
+}
+
+// Helper: only use a bg string if it's a real URL (not a placeholder)
+function resolveBg(url) {
+  if (!url || typeof url !== 'string') return null;
+  if (url.startsWith('YOUR_') || url.trim() === '') return null;
+  return url;
 }
 
 const IgIcon = () => (
@@ -31,6 +37,15 @@ const TkIcon = () => (
 
 export default function HomePage({ data, navigate, bookClick, callClick }) {
   const s = data.settings;
+  const hsBg = data.home_section_backgrounds || {};
+
+  // Resolve section backgrounds — only use real URLs
+  const servicesBg = resolveBg(hsBg.services);
+  const teamBg = resolveBg(hsBg.team);
+  const galleryBg = resolveBg(hsBg.gallery);
+  const ctaBg = resolveBg(hsBg.cta);
+  const heroBg = resolveBg(s.hero_bg_image);
+
   const services = data.services.slice(0, 4);
   const homeGallerySlides = data.gallery.slice(0, 6);
   const todayHrs = todayHours(s);
@@ -50,6 +65,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
     return () => obs.disconnect();
   }, []);
 
+  // Gallery auto-advance — logic unchanged per rules
   useEffect(() => {
     if (homeGallerySlides.length <= 1) return;
     const id = setInterval(() => {
@@ -61,27 +77,30 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
   return (
     <>
       {/* ═══════════════════════════════════════
-          HERO — single, clean, matches reference
+          HERO
       ═══════════════════════════════════════ */}
       <section
         className={`hero${s.hero_bg_image ? ' has-bg' : ''}`}
         style={s.hero_bg_image ? { '--hero-bg-img': `url("${s.hero_bg_image}")` } : {}}
       >
-        {/* Gradient orbs — only when no photo background */}
-        {!s.hero_bg_image && <div className="hero-orb-1" />}
-        {!s.hero_bg_image && <div className="hero-orb-2" />}
+        {!heroBg && <div className="hero-orb-1" />}
+        {!heroBg && <div className="hero-orb-2" />}
 
-        {/* Spacer so content clears the fixed header */}
+        {/* Spacer clears the fixed header */}
         <div style={{ height: 'var(--header-h, 108px)', flexShrink: 0 }} aria-hidden="true" />
 
         <div className="hero-content hero-content-split">
 
-          {/* ── ROW 1: Title (left) + Logo (right) ── */}
+          {/* ROW 1: Title (left) + Logo (right) */}
           <div className="hero-brand-row">
             <h1 className="hero-title">
-              <span className="hero-name-gradient">
-                {s.business_name || 'Luxury Barber Culture'}
+              <span className="hero-title-top hero-name-gradient">
+                Luxury Barber
               </span>
+              <span className="hero-title-bottom hero-name-gradient">
+                Culture
+              </span>
+              <span className="hero-title-glow" />
             </h1>
 
             {s.logo_url && (
@@ -95,7 +114,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             )}
           </div>
 
-          {/* ── ROW 2: ONE Book Now button ── */}
+          {/* ROW 2: Book Now */}
           <button className="hero-book-btn" onClick={() => bookClick('hero')}>
             Book Now
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -103,7 +122,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             </svg>
           </button>
 
-          {/* ── ROW 3: ONE contact row — Instagram + phone + hours ── */}
+          {/* ROW 3: Contact pills */}
           <div className="hero-contact-row">
             {s.instagram_url && (
               <a
@@ -112,7 +131,6 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
                 rel="noopener"
                 className="hero-contact-ig"
                 aria-label="Instagram"
-                onClick={() => track('instagram_click', 'hero')}
               >
                 <IgIcon />
               </a>
@@ -139,13 +157,19 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
           <div className="hero-scroll-line" />
           <span>Scroll</span>
         </div>
-      </section>
+      </section >
 
       {/* ═══════════════════════════════════════
           SERVICES
       ═══════════════════════════════════════ */}
-      <section className="services-section">
-        <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
+      <section
+        className={`services-section${servicesBg ? ' has-bg' : ''}`}
+        style={servicesBg ? { '--section-bg-img': `url("${servicesBg}")` } : {}}
+      >
+        {/* Top edge transition */}
+        <div className="section-edge-top" aria-hidden="true" />
+
+        <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div className="services-header">
             <div>
               <div className="section-eyebrow">Our Services</div>
@@ -171,7 +195,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             </div>
           </div>
 
-          <div className="services-list">
+          <div className={`services-list${servicesBg ? ' on-bg' : ''}`}>
             {services.map((svc, i) => (
               <div
                 key={svc.id}
@@ -203,162 +227,128 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
             </button>
           </div>
         </div>
-      </section>
+
+        <div className="section-edge-bottom" aria-hidden="true" />
+      </section >
 
       {/* ═══════════════════════════════════════
           TEAM
       ═══════════════════════════════════════ */}
-      {data.barbers.length > 0 && (
-        <section className="team-section">
-          <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
-            <div className="section-eyebrow">The Team</div>
-            <h2 className="section-headline">Meet Your <strong>Barbers</strong></h2>
+      {
+        data.barbers.length > 0 && (
+          <section
+            className={`team-section${teamBg ? ' has-bg' : ''}`}
+            style={teamBg ? { '--section-bg-img': `url("${teamBg}")` } : {}}
+          >
+            <div className="section-edge-top" aria-hidden="true" />
 
-            <div className="barbers-grid">
-              {data.barbers.map((b, i) => (
-                <div key={b.id} className="barber-card reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
-                  <div className="barber-photo-wrap">
-                    {b.photo_url
-                      ? <img className="barber-photo-img" src={b.photo_url} alt={b.name} />
-                      : <div className="barber-photo-placeholder">✂</div>}
+            <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+              <div className="section-eyebrow">The Team</div>
+              <h2 className="section-headline">Meet Your <strong>Barber</strong></h2>
+
+              <div className="barbers-grid">
+                {data.barbers.map((b, i) => (
+                  <div key={b.id} className="barber-card reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
+                    <div className="barber-photo-wrap">
+                      {b.photo_url
+                        ? <img className="barber-photo-img" src={b.photo_url} alt={b.name} />
+                        : <div className="barber-photo-placeholder">✂</div>}
+                    </div>
+                    <div className="barber-card-info">
+                      <div className="barber-card-name">{b.name}</div>
+                      <div className="barber-card-title">{b.title}</div>
+                      {b.bio && <div className="barber-card-bio">{b.bio}</div>}
+                      {b.specialties?.length > 0 && (
+                        <div className="barber-tags">
+                          {b.specialties.map(sp => <span key={sp} className="barber-tag">{sp}</span>)}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="barber-card-info">
-                    <div className="barber-card-name">{b.name}</div>
-                    <div className="barber-card-title">{b.title}</div>
-                    {b.bio && <div className="barber-card-bio">{b.bio}</div>}
-                    {b.specialties?.length > 0 && (
-                      <div className="barber-tags">
-                        {b.specialties.map(sp => <span key={sp} className="barber-tag">{sp}</span>)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+
+            <div className="section-edge-bottom" aria-hidden="true" />
+          </section>
+        )
+      }
 
       {/* ═══════════════════════════════════════
           GALLERY PREVIEW
       ═══════════════════════════════════════ */}
-      {homeGallerySlides.length > 0 && (
-        <section className="home-gallery-slider">
-          <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap', gap: 20 }}>
-              <div>
-                <div className="section-eyebrow">Portfolio</div>
-                <h2 className="section-headline">Our <strong>Work</strong></h2>
-              </div>
-              <button className="btn-ghost" onClick={() => navigate('gallery')}>
-                View all →
-              </button>
-            </div>
+      {
+        homeGallerySlides.length > 0 && (
+          <section
+            className={`home-gallery-section${galleryBg ? ' has-bg' : ''}`}
+            style={galleryBg ? { '--section-bg-img': `url("${galleryBg}")` } : {}}
+          >
+            <div className="section-edge-top" aria-hidden="true" />
 
-            <div className="gallery-slider-shell">
-              <div className="gallery-slider-main">
-                {homeGallerySlides.map((img, i) => (
-                  <div
-                    key={(img.id || img.url || i) + '-slide'}
-                    className={`gallery-slide ${i === gallerySlide ? 'active' : ''}`}
-                  >
-                    <img
-                      src={img.url || img.thumbnail_url}
-                      alt={img.caption || `Work ${i + 1}`}
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
-
-                {homeGallerySlides.length > 1 && (
-                  <>
-                    <button
-                      className="gallery-arrow prev"
-                      onClick={() => setGallerySlide((prev) => prev === 0 ? homeGallerySlides.length - 1 : prev - 1)}
-                      aria-label="Previous slide"
-                    >←</button>
-                    <button
-                      className="gallery-arrow next"
-                      onClick={() => setGallerySlide((prev) => (prev + 1) % homeGallerySlides.length)}
-                      aria-label="Next slide"
-                    >→</button>
-                  </>
-                )}
-              </div>
-
-              <div className="gallery-slider-thumbs">
-                {homeGallerySlides.map((img, i) => (
-                  <button
-                    key={(img.id || img.url || i) + '-thumb'}
-                    className={`gallery-thumb ${i === gallerySlide ? 'active' : ''}`}
-                    onClick={() => setGallerySlide(i)}
-                    aria-label={`Go to slide ${i + 1}`}
-                  >
-                    <img
-                      src={img.thumbnail_url || img.url}
-                      alt={img.caption || `Thumbnail ${i + 1}`}
-                      loading="lazy"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════
-          REVIEWS
-      ═══════════════════════════════════════ */}
-      {data.testimonials.length > 0 && (
-        <section className="reviews-section">
-          <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 20 }}>
-              <div>
-                <div className="section-eyebrow">Client Reviews</div>
-                <h2 className="section-headline">What They're <strong>Saying</strong></h2>
-              </div>
-              <button className="btn-ghost" onClick={() => navigate('reviews')}>All reviews →</button>
-            </div>
-            <div className="reviews-grid">
-              {data.testimonials.slice(0, 3).map((r, i) => (
-                <div key={r.id} className="review-card reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
-                  <div className="review-stars">
-                    {Array.from({ length: r.rating }).map((_, j) => (
-                      <span key={j} className="review-star">★</span>
-                    ))}
-                  </div>
-                  <div className="review-text">{r.text}</div>
-                  <div className="review-footer">
-                    <div className="review-avatar">{r.name[0]}</div>
-                    <div className="review-name">{r.name}</div>
-                    {r.source && <div className="review-source">{r.source}</div>}
-                  </div>
+            <div className="home-gallery-inner" style={{ position: 'relative', zIndex: 1 }}>
+              <div className="home-gallery-header">
+                <div>
+                  <div className="section-eyebrow">Portfolio</div>
+                  <h2 className="section-headline">Our <strong>Work</strong></h2>
                 </div>
-              ))}
+                <button className="btn-ghost" onClick={() => navigate('gallery')}>
+                  View all →
+                </button>
+              </div>
+
+              {/* 3-up desktop / 1-up mobile — gallery logic unchanged */}
+              <div className="home-gallery-track">
+                {[0, 1, 2].map((offset, col) => {
+                  const idx = (gallerySlide + offset) % homeGallerySlides.length;
+                  const img = homeGallerySlides[idx];
+                  return (
+                    <div
+                      key={`${gallerySlide}-${offset}`}
+                      className="home-gallery-card"
+                      style={{ animationDelay: `${col * 0.08}s` }}
+                      onClick={() => navigate('gallery')}
+                    >
+                      <img
+                        src={img.url || img.thumbnail_url}
+                        alt={img.caption || `Work ${idx + 1}`}
+                        loading="lazy"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pagination dots */}
+              {homeGallerySlides.length > 1 && (
+                <div className="home-gallery-dots">
+                  {homeGallerySlides.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`home-gallery-dot${i === gallerySlide ? ' active' : ''}`}
+                      onClick={() => setGallerySlide(i)}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        </section>
-      )}
+
+            <div className="section-edge-bottom" aria-hidden="true" />
+          </section>
+        )
+      }
 
       {/* ═══════════════════════════════════════
           FINAL CTA
       ═══════════════════════════════════════ */}
-      <section style={{
-        background: 'var(--ink)',
-        padding: 'clamp(80px,10vw,140px) clamp(20px,5vw,64px)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        <div aria-hidden="true" style={{
-          position: 'absolute', top: '50%', left: '50%',
-          transform: 'translate(-50%,-50%)',
-          width: '60%', height: '80%', borderRadius: '50%',
-          background: 'radial-gradient(ellipse,rgba(74,124,255,0.08) 0%,transparent 70%)',
-          pointerEvents: 'none',
-        }} />
+      <section
+        className={`cta-section${ctaBg ? ' has-bg' : ''}`}
+        style={ctaBg ? { '--section-bg-img': `url("${ctaBg}")` } : {}}
+      >
+        {/* Centered radial glow */}
+        <div className="cta-glow" aria-hidden="true" />
 
-        <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+        <div className="cta-inner">
           <div className="section-eyebrow" style={{ justifyContent: 'center' }}>Ready?</div>
           <h2 className="section-headline" style={{ fontSize: 'clamp(2.8rem,6vw,5rem)', marginBottom: 20 }}>
             Book Your <strong>Next Cut</strong>
@@ -380,20 +370,17 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
           </div>
           <div className="social-row" style={{ justifyContent: 'center' }}>
             {s.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn"
-                onClick={() => track('instagram_click', 'cta')}>
+              <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn">
                 <IgIcon />
               </a>
             )}
             {s.facebook_url && (
-              <a href={s.facebook_url} target="_blank" rel="noopener" className="social-btn"
-                onClick={() => track('facebook_click', 'cta')}>
+              <a href={s.facebook_url} target="_blank" rel="noopener" className="social-btn">
                 <FbIcon />
               </a>
             )}
             {s.tiktok_url && (
-              <a href={s.tiktok_url} target="_blank" rel="noopener" className="social-btn"
-                onClick={() => track('tiktok_click', 'cta')}>
+              <a href={s.tiktok_url} target="_blank" rel="noopener" className="social-btn">
                 <TkIcon />
               </a>
             )}
