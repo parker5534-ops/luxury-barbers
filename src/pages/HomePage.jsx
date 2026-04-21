@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -50,7 +54,6 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
   const homeGallerySlides = data.gallery.slice(0, 6);
   const todayHrs = todayHours(s);
   const isClosed = todayHrs === 'Closed';
-  const [gallerySlide, setGallerySlide] = useState(0);
 
   // Intersection observer for reveal animations
   useEffect(() => {
@@ -64,15 +67,6 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, []);
-
-  // Gallery auto-advance — logic unchanged per rules
-  useEffect(() => {
-    if (homeGallerySlides.length <= 1) return;
-    const id = setInterval(() => {
-      setGallerySlide((prev) => (prev + 1) % homeGallerySlides.length);
-    }, 3500);
-    return () => clearInterval(id);
-  }, [homeGallerySlides.length]);
 
   return (
     <>
@@ -95,10 +89,10 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
           <div className="hero-brand-row">
             <h1 className="hero-title">
               <span className="hero-title-top hero-name-gradient">
-                Luxury Barber
+                {s.hero_headline || 'Luxury Barber'}
               </span>
               <span className="hero-title-bottom hero-name-gradient">
-                Culture
+                {s.hero_subheadline || 'Culture'}
               </span>
               <span className="hero-title-glow" />
             </h1>
@@ -169,7 +163,10 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
         {/* Top edge transition */}
         <div className="section-edge-top" aria-hidden="true" />
 
-        <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div
+          className="lbc-inner"
+          style={{ position: 'relative', zIndex: 1 }}
+        >
           <div className="services-header">
             <div>
               <div className="section-eyebrow">Our Services</div>
@@ -297,40 +294,50 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
               </div>
 
               {/* 3-up desktop / 1-up mobile — gallery logic unchanged */}
-              <div className="home-gallery-track">
-                {[0, 1, 2].map((offset, col) => {
-                  const idx = (gallerySlide + offset) % homeGallerySlides.length;
-                  const img = homeGallerySlides[idx];
-                  return (
+              <Swiper
+                className="home-gallery-swiper"
+                modules={[Autoplay, Pagination]}
+                spaceBetween={16}
+                slidesPerView={1.08}
+                autoplay={{
+                  delay: 3500,
+                  disableOnInteraction: false,
+                }}
+                pagination={{ clickable: true }}
+                breakpoints={{
+                  0: {
+                    slidesPerView: 1.08,
+                    spaceBetween: 14,
+                  },
+                  640: {
+                    slidesPerView: 1.25,
+                    spaceBetween: 16,
+                  },
+                  900: {
+                    slidesPerView: 2.1,
+                    spaceBetween: 18,
+                  },
+                  1200: {
+                    slidesPerView: 3,
+                    spaceBetween: 18,
+                  },
+                }}
+              >
+                {homeGallerySlides.map((img, i) => (
+                  <SwiperSlide key={img.id || i}>
                     <div
-                      key={`${gallerySlide}-${offset}`}
                       className="home-gallery-card"
-                      style={{ animationDelay: `${col * 0.08}s` }}
                       onClick={() => navigate('gallery')}
                     >
                       <img
                         src={img.url || img.thumbnail_url}
-                        alt={img.caption || `Work ${idx + 1}`}
+                        alt={img.caption || `Work ${i + 1}`}
                         loading="lazy"
                       />
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Pagination dots */}
-              {homeGallerySlides.length > 1 && (
-                <div className="home-gallery-dots">
-                  {homeGallerySlides.map((_, i) => (
-                    <button
-                      key={i}
-                      className={`home-gallery-dot${i === gallerySlide ? ' active' : ''}`}
-                      onClick={() => setGallerySlide(i)}
-                      aria-label={`Go to slide ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </div>
 
             <div className="section-edge-bottom" aria-hidden="true" />

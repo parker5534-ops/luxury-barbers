@@ -82,7 +82,7 @@ export default function AboutPage({ data, bookClick }) {
               : {}
           }
         >
-          <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
+          <div className="barbers-section-inner">
             <div className="section-eyebrow">The Team</div>
             <h2 className="section-headline">Meet Your <strong>Barber</strong></h2>
             <div className="barbers-grid">

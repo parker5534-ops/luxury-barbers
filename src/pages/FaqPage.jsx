@@ -12,10 +12,12 @@ export default function FaqPage({ data, bookClick }) {
           : {}
       }
     >
-      <div style={{ maxWidth: 'var(--max-w)', margin: '0 auto' }}>
-        <div className="section-eyebrow">FAQ</div>
-        <h1 className="section-headline">Frequently Asked <strong>Questions</strong></h1>
-        <p className="section-body">Everything you need to know before your visit.</p>
+      <div className="lbc-inner">
+        <div className="faq-header">
+          <div className="section-eyebrow">FAQ</div>
+          <h1 className="section-headline">Frequently Asked <strong>Questions</strong></h1>
+          <p className="section-body">Everything you need to know before your visit.</p>
+        </div>
         <div className="faq-list">
           {data.faqs.map(faq => (
             <div key={faq.id} className="faq-item">

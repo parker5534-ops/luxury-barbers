@@ -1,15 +1,15 @@
 export const siteData = {
     settings: {
-        business_name: 'Lets Look And Feel Good!',
-        hero_headline: 'Luxury Cuts.',
-        hero_subheadline: 'Precision Grooming.',
+        business_name: 'Look Good Feel Good',
+        hero_headline: 'Luxury Barber',
+        hero_subheadline: 'Culture',
         hero_bg_image: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776571421/luxury-barbers/gallery/jdcqnqt6884iqgilo0ip.jpg',
         logo_url: 'https://res.cloudinary.com/dbttztigu/image/upload/v1776571437/luxury-barbers/gallery/ty1mrfnlfiawbsucvm9v.png',
         phone: '(832) 899-9191',
         email: 'luxurybarberculture1@gmail.com',
         address: '19056 Gulf Freeway, Suite 11, Friendswood, TX 77546',
         vagaro_url: 'https://www.vagaro.com/luxurybarberculture',
-        instagram_url: 'https://instagram.com/luxurybarberculture',
+        instagram_url: 'https://www.instagram.com/fonzo_thebarber',
         facebook_url: 'https://facebook.com/luxurybarberculture',
         tiktok_url: 'https://tiktok.com/@luxurybarberculture',
         hours_monday: 'Closed',
@@ -187,7 +187,7 @@ export const siteData = {
         {
             id: '3',
             question: 'What payment do you accept?',
-            answer: 'Credit/debit cards, Zelle, and cash.',
+            answer: 'Venmo, Cashapp, Zelle, or cash.',
         },
         {
             id: '4',
