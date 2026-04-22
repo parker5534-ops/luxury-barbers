@@ -125,6 +125,14 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
                 rel="noopener"
                 className="hero-contact-ig"
                 aria-label="Instagram"
+                onClick={() => {
+                  if (window.gtag) {
+                    window.gtag('event', 'instagram_click', {
+                      event_category: 'engagement',
+                      event_label: 'hero'
+                    });
+                  }
+                }}
               >
                 <IgIcon />
               </a>
@@ -377,7 +385,20 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
           </div>
           <div className="social-row" style={{ justifyContent: 'center' }}>
             {s.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener" className="social-btn">
+              <a
+                href={s.instagram_url}
+                target="_blank"
+                rel="noopener"
+                className="social-btn"
+                onClick={() => {
+                  if (window.gtag) {
+                    window.gtag('event', 'instagram_click', {
+                      event_category: 'engagement',
+                      event_label: 'bottom_cta'
+                    });
+                  }
+                }}
+              >
                 <IgIcon />
               </a>
             )}

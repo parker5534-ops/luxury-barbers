@@ -69,16 +69,40 @@ export default function App() {
     return () => ro.disconnect();
   }, []);
 
+useEffect(() => {
+  if (window.gtag) {
+    window.gtag('event', 'page_view', {
+      page_title: page,
+      page_location: window.location.href,
+      page_path: `/${page}`
+    });
+  }
+}, [page]);
+
   const navigate = useCallback((p) => {
     setPage(p);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  const bookClick = useCallback(() => {
-    window.open(s.vagaro_url || '#', '_blank', 'noopener');
-  }, [s.vagaro_url]);
+  const bookClick = useCallback((location = 'unknown') => {
+  if (window.gtag) {
+    window.gtag('event', 'book_now_click', {
+      event_category: 'engagement',
+      event_label: location
+    });
+  }
 
-  const callClick = useCallback(() => {}, []);
+  window.open(s.vagaro_url || '#', '_blank', 'noopener');
+}, [s.vagaro_url]);
+
+  const callClick = useCallback((location = 'unknown') => {
+  if (window.gtag) {
+    window.gtag('event', 'call_click', {
+      event_category: 'engagement',
+      event_label: location
+    });
+  }
+}, []);
 
   const renderPage = () => {
     const props = { data, navigate, bookClick, callClick };

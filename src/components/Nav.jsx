@@ -21,6 +21,13 @@ export default function Nav({ page, navigate, scrolled, s, onBook, onCall }) {
   const [open, setOpen] = useState(false);
 
   const go = (id) => {
+    if (window.gtag) {
+      window.gtag('event', 'navigation_click', {
+        event_category: 'navigation',
+        event_label: id
+      });
+    }
+
     navigate(id);
     setOpen(false);
   };
@@ -44,7 +51,7 @@ export default function Nav({ page, navigate, scrolled, s, onBook, onCall }) {
               </a>
             ))}
 
-            <a href={`tel:${s.phone}`} className="nav-phone" onClick={onCall}>
+            <a href={`tel:${s.phone}`} className="nav-phone" onClick={() => onCall('nav')}>
               {s.phone}
             </a>
 
@@ -60,6 +67,14 @@ export default function Nav({ page, navigate, scrolled, s, onBook, onCall }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="nav-instagram"
+                onClick={() => {
+                  if (window.gtag) {
+                    window.gtag('event', 'instagram_click', {
+                      event_category: 'engagement',
+                      event_label: 'nav'
+                    });
+                  }
+                }}
                 aria-label="Instagram"
               >
                 <IgIcon />
@@ -115,7 +130,7 @@ export default function Nav({ page, navigate, scrolled, s, onBook, onCall }) {
             <a
               href={`tel:${s.phone}`}
               onClick={() => {
-                onCall();
+                onCall('nav_drawer');
                 setOpen(false);
               }}
               style={{
