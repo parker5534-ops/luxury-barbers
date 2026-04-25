@@ -52,6 +52,7 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
 
   const services = data.services.slice(0, 4);
   const homeGallerySlides = [...data.gallery]
+  .filter(img => img.category !== 'before-after')
   .sort(() => 0.5 - Math.random())
   .slice(0, 9);
   const todayHrs = todayHours(s);
