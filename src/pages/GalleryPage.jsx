@@ -1,11 +1,62 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 
 const CATS = [
   { id: 'all', label: 'All' },
   { id: 'haircut', label: 'Haircuts' },
   { id: 'beard', label: 'Beard' },
   { id: 'fade', label: 'Fades' },
+  { id: 'design', label: 'Designs' },
+  { id: 'before-after', label: 'Before/After' },
 ];
+
+function BeforeAfterSlider({ before, after, caption }) {
+  const [pos, setPos] = React.useState(50);
+  const ref = React.useRef(null);
+
+  const move = (clientX) => {
+    const box = ref.current?.getBoundingClientRect();
+    if (!box) return;
+
+    const x = clientX - box.left;
+    const percent = Math.max(0, Math.min(100, (x / box.width) * 100));
+    setPos(percent);
+  };
+
+  const handlePointerMove = (e) => {
+    if (e.buttons !== 1 && e.pointerType === 'mouse') return;
+    move(e.clientX);
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="before-after-slider"
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        move(e.clientX);
+      }}
+      onPointerMove={(e) => {
+        handlePointerMove(e);
+      }}
+    >
+      <img src={before} alt={`Before ${caption || ''}`} className="ba-img" draggable="false" />
+      <img
+        src={after}
+        alt={`After ${caption || ''}`}
+        className="ba-img ba-after"
+        draggable="false"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+      />
+
+      <div className="ba-label ba-label-before">Before</div>
+      <div className="ba-label ba-label-after">After</div>
+
+      <div className="ba-line" style={{ left: `${pos}%` }} />
+      <div className="ba-handle" style={{ left: `${pos}%` }}>↔</div>
+    </div>
+  );
+}
 
 export default function GalleryPage({ data, bookClick }) {
   const [cat, setCat] = useState('all');
@@ -24,6 +75,51 @@ export default function GalleryPage({ data, bookClick }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [imgs.length]);
+
+  React.useEffect(() => {
+    if (lightbox !== null) {
+      document.body.classList.add('lightbox-open');
+    } else {
+      document.body.classList.remove('lightbox-open');
+    }
+
+    return () => {
+      document.body.classList.remove('lightbox-open');
+    };
+  }, [lightbox]);
+
+  const openLightbox = (index) => {
+    setLightbox(index);
+  };
+
+  const closeLightbox = () => {
+    setLightbox(null);
+  };
+
+  const activeImg = lightbox !== null ? imgs[lightbox] : null;
+
+  const touchStartX = React.useRef(null);
+
+  const handleLightboxTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleLightboxTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - endX;
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setLightbox(l => Math.min(imgs.length - 1, l + 1));
+      } else {
+        setLightbox(l => Math.max(0, l - 1));
+      }
+    }
+
+    touchStartX.current = null;
+  };
 
   return (
     <section
@@ -61,7 +157,7 @@ export default function GalleryPage({ data, bookClick }) {
               <a
                 href={data.settings.instagram_url}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 className="btn-outline"
                 style={{ display: 'inline-flex' }}
               >
@@ -75,13 +171,23 @@ export default function GalleryPage({ data, bookClick }) {
               <div
                 key={img.id}
                 className="gallery-item"
-                onClick={() => setLightbox(i)}
+                onClick={() => openLightbox(i)}
               >
-                <img
-                  src={img.thumbnail_url || img.url}
-                  alt={img.caption || `Work ${i + 1}`}
-                  loading="lazy"
-                />
+                {img.category === 'before-after' && img.before && img.after ? (
+                  <div className="gallery-before-after-preview">
+                    <BeforeAfterSlider
+                      before={img.before}
+                      after={img.after}
+                      caption={img.caption}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={img.thumbnail_url || img.url}
+                    alt={img.caption || `Work ${i + 1}`}
+                    loading="lazy"
+                  />
+                )}
                 <div className="gallery-item-overlay" />
               </div>
             ))}
@@ -95,37 +201,70 @@ export default function GalleryPage({ data, bookClick }) {
         </div>
       </div>
 
-      {lightbox !== null && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
-          <button
-            className="lightbox-btn prev"
-            onClick={e => {
-              e.stopPropagation();
-              setLightbox(l => Math.max(0, l - 1));
-            }}
-          >
-            ‹
-          </button>
-          <img
-            className="lightbox-img"
-            src={imgs[lightbox].url}
-            alt={imgs[lightbox].caption || ''}
-            onClick={e => e.stopPropagation()}
+      {activeImg &&
+  ReactDOM.createPortal(
+    <div
+      className="gallery-lightbox"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          closeLightbox();
+        }
+      }}
+      onTouchStart={handleLightboxTouchStart}
+      onTouchEnd={handleLightboxTouchEnd}
+    >
+      <button
+        type="button"
+        className="gallery-lightbox-close"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeLightbox();
+        }}
+      >
+        ×
+      </button>
+
+      <button
+        type="button"
+        className="gallery-lightbox-btn gallery-lightbox-prev"
+        onClick={(e) => {
+          e.stopPropagation();
+          setLightbox(l => Math.max(0, l - 1));
+        }}
+      >
+        ‹
+      </button>
+
+      <div className="gallery-lightbox-content" onClick={(e) => e.stopPropagation()}>
+        {activeImg.category === 'before-after' && activeImg.before && activeImg.after ? (
+          <BeforeAfterSlider
+            before={activeImg.before}
+            after={activeImg.after}
+            caption={activeImg.caption}
           />
-          <button
-            className="lightbox-btn next"
-            onClick={e => {
-              e.stopPropagation();
-              setLightbox(l => Math.min(imgs.length - 1, l + 1));
-            }}
-          >
-            ›
-          </button>
-          <button className="lightbox-close" onClick={() => setLightbox(null)}>
-            ×
-          </button>
-        </div>
-      )}
+        ) : (
+          <img
+            className="gallery-lightbox-img"
+            src={activeImg.url}
+            alt={activeImg.caption || ''}
+          />
+        )}
+      </div>
+
+      <button
+        type="button"
+        className="gallery-lightbox-btn gallery-lightbox-next"
+        onClick={(e) => {
+          e.stopPropagation();
+          setLightbox(l => Math.min(imgs.length - 1, l + 1));
+        }}
+      >
+        ›
+      </button>
+    </div>,
+    document.body
+  )}
     </section>
   );
 }

@@ -51,7 +51,9 @@ export default function HomePage({ data, navigate, bookClick, callClick }) {
   const heroBg = resolveBg(s.hero_bg_image);
 
   const services = data.services.slice(0, 4);
-  const homeGallerySlides = data.gallery.slice(0, 6);
+  const homeGallerySlides = [...data.gallery]
+  .sort(() => 0.5 - Math.random())
+  .slice(0, 9);
   const todayHrs = todayHours(s);
   const isClosed = todayHrs === 'Closed';
 
